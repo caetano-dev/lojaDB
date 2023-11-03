@@ -1,10 +1,25 @@
+
+-- Database: loja
+
+DROP DATABASE IF EXISTS test;
+
+CREATE DATABASE test
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'French_France.1252'
+    LC_CTYPE = 'French_France.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
 -- Table: public.funcionario
 
---DROP TABLE IF EXISTS public.funcionario;
+DROP TABLE IF EXISTS public.funcionario;
 
 CREATE TABLE IF NOT EXISTS public.funcionario
 (
-    "CPFfuncionario" character varying NOT NULL,
+    "CPFfuncionario" numeric NOT NULL,
     nome character varying NOT NULL,
     cargo character varying NOT NULL,
     telefone numeric NOT NULL,
@@ -23,7 +38,7 @@ ALTER TABLE IF EXISTS public.funcionario
 
 -- Table: public.cliente
 
--- DROP TABLE IF EXISTS public.cliente;
+DROP TABLE IF EXISTS public.cliente;
 
 CREATE TABLE IF NOT EXISTS public.cliente
 (
@@ -42,7 +57,7 @@ ALTER TABLE IF EXISTS public.cliente
 
 -- Table: public.fornecedor
 
--- DROP TABLE IF EXISTS public.fornecedor;
+DROP TABLE IF EXISTS public.fornecedor;
 
 CREATE TABLE IF NOT EXISTS public.fornecedor
 (
@@ -58,7 +73,7 @@ ALTER TABLE IF EXISTS public.fornecedor
 
 -- Table: public.produto
 
--- DROP TABLE IF EXISTS public.produto;
+DROP TABLE IF EXISTS public.produto;
 
 CREATE TABLE IF NOT EXISTS public.produto
 (
@@ -79,7 +94,7 @@ ALTER TABLE IF EXISTS public.produto
 
 -- Table: public.venda
 
--- DROP TABLE IF EXISTS public.venda;
+DROP TABLE IF EXISTS public.venda;
 
 CREATE TABLE IF NOT EXISTS public.venda
 (
@@ -87,7 +102,7 @@ CREATE TABLE IF NOT EXISTS public.venda
     "dataVenda" date NOT NULL,
     "valorTotal" numeric NOT NULL,
     "CPFfuncionario" numeric NOT NULL,
-    "CPFcliente" numeric varying NOT NULL,
+    "CPFcliente" numeric NOT NULL,
     CONSTRAINT venda_pkey PRIMARY KEY ("IDvenda"),
     CONSTRAINT "CPFcliente" FOREIGN KEY ("CPFcliente")
         REFERENCES public.cliente ("CPFcliente") MATCH SIMPLE
