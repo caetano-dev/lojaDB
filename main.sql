@@ -120,3 +120,29 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.venda
     OWNER to postgres;
+
+-- Table: public.inclui
+
+DROP TABLE IF EXISTS public.inclui;
+
+CREATE TABLE IF NOT EXISTS public.inclui
+(
+    "dataDaInclusao" date NOT NULL,
+    "IDproduto" integer NOT NULL,
+    "IDvenda" integer NOT NULL,
+    CONSTRAINT "IDproduto" FOREIGN KEY ("IDproduto")
+        REFERENCES public.produto ("IDproduto") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT "IDvenda" FOREIGN KEY ("IDvenda")
+        REFERENCES public.venda ("IDvenda") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.inclui
+    OWNER to postgres;
