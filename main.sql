@@ -1,4 +1,3 @@
-
 -- Database: loja
 
 DROP DATABASE IF EXISTS loja;
@@ -6,12 +5,13 @@ DROP DATABASE IF EXISTS loja;
 CREATE DATABASE loja
     WITH
     OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'French_France.1252'
-    LC_CTYPE = 'French_France.1252'
+    ENCODING = 'LATIN1'
+    LC_COLLATE = 'Portuguese_Brazil.1252'
+    LC_CTYPE = 'Portuguese_Brazil.1252'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
+
 -- Table: public.produto
 DROP TABLE IF EXISTS public.produto;
 
