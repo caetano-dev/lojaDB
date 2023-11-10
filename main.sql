@@ -140,3 +140,28 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.inclui
     OWNER to postgres;
+
+
+-- Table: public.repoe
+DROP TABLE IF EXISTS public.repoe;
+
+CREATE TABLE IF NOT EXISTS public.repoe
+(
+    "dataDaReposicao" date NOT NULL,
+    "CNPJfornecedor" numeric NOT NULL,
+    "IDproduto" integer NOT NULL,
+    CONSTRAINT "IDproduto" FOREIGN KEY ("IDproduto")
+        REFERENCES public.produto ("IDproduto") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT "CNPJfornecedor" FOREIGN KEY ("CNPJfornecedor")
+        REFERENCES public.fornecedor ("CNPJfornecedor") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.repoe
+    OWNER to postgres;
