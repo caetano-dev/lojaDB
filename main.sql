@@ -17,13 +17,12 @@ DROP TABLE IF EXISTS public.produto;
 
 CREATE TABLE IF NOT EXISTS public.produto
 (
-    "IDproduto" integer NOT NULL,
+    "IDproduto" SERIAL PRIMARY KEY,
     nome character varying NOT NULL,
     marca character varying NOT NULL,
     tipo character varying NOT NULL,
     preco numeric NOT NULL,
-    quantidade integer NOT NULL,
-    CONSTRAINT produto_pkey PRIMARY KEY ("IDproduto")
+    quantidade integer NOT NULL
 )
 TABLESPACE pg_default;
 
@@ -39,9 +38,8 @@ CREATE TABLE IF NOT EXISTS public.cliente
     nome character varying NOT NULL,
     email character varying NOT NULL,
     endereco character varying NOT NULL,
-    "CPFcliente" numeric NOT NULL,
+    "CPFcliente" SERIAL PRIMARY KEY,
     telefone numeric NOT NULL,
-    CONSTRAINT "CPFcliente" PRIMARY KEY ("CPFcliente"),
     CONSTRAINT telefone UNIQUE (telefone)
 )
 TABLESPACE pg_default;
@@ -55,11 +53,10 @@ DROP TABLE IF EXISTS public.vendedor;
 
 CREATE TABLE IF NOT EXISTS public.vendedor
 (
-    "CPFvendedor" numeric NOT NULL,
+    "CPFvendedor" SERIAL PRIMARY KEY,
     nome character varying NOT NULL,
     email character varying NOT NULL,
-    salario numeric NOT NULL,
-    CONSTRAINT vendedor_pkey PRIMARY KEY ("CPFvendedor")
+    salario numeric NOT NULL
 )
 TABLESPACE pg_default;
 
@@ -72,12 +69,11 @@ DROP TABLE IF EXISTS public.venda;
 
 CREATE TABLE IF NOT EXISTS public.venda
 (
-    "IDvenda" integer NOT NULL,
+    "IDvenda"  SERIAL PRIMARY KEY,
     "dataVenda" date NOT NULL,
     "valorTotal" numeric NOT NULL,
-    "CPFvendedor" numeric NOT NULL,
-    "CPFcliente" numeric NOT NULL,
-    CONSTRAINT venda_pkey PRIMARY KEY ("IDvenda"),
+    "CPFvendedor" integer NOT NULL,
+    "CPFcliente" integer NOT NULL,
     CONSTRAINT "CPFcliente" FOREIGN KEY ("CPFcliente")
         REFERENCES public.cliente ("CPFcliente") MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -100,11 +96,10 @@ DROP TABLE IF EXISTS public.fornecedor;
 
 CREATE TABLE IF NOT EXISTS public.fornecedor
 (
-    "CNPJfornecedor" numeric NOT NULL,
+    "CNPJfornecedor" SERIAL PRIMARY KEY,
     "ValorTotal" numeric NOT NULL,
     "IDproduto" integer NOT NULL,
     quantidade numeric NOT NULL,
-    CONSTRAINT "CNPJfornecedor" PRIMARY KEY ("CNPJfornecedor"),
     CONSTRAINT "IDproduto" FOREIGN KEY ("IDproduto")
         REFERENCES public.produto ("IDproduto") MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -148,7 +143,7 @@ DROP TABLE IF EXISTS public.repoe;
 CREATE TABLE IF NOT EXISTS public.repoe
 (
     "dataDaReposicao" date NOT NULL,
-    "CNPJfornecedor" numeric NOT NULL,
+    "CNPJfornecedor" integer NOT NULL,
     "IDproduto" integer NOT NULL,
     CONSTRAINT "IDproduto" FOREIGN KEY ("IDproduto")
         REFERENCES public.produto ("IDproduto") MATCH SIMPLE
