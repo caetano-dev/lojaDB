@@ -9,17 +9,17 @@ VALUES
 
 INSERT INTO public.cliente (nome, email, endereco, "CPFcliente", telefone)
 VALUES
-    ('Ana Silva', 'ana.silva@email.com', 'Rua das Flores, 123', 12345678901, 1122334455),
-    ('Carlos Oliveira', 'carlos.oliveira@email.com', 'Av. dos Pássaros, 456', 23456789012, 2233445566),
-    ('Mariana Santos', 'mariana.santos@email.com', 'Travessa das Árvores, 789', 34567890123, 3344556677),
-    ('Rafaela Lima', 'rafaela.lima@email.com', 'Rua do Sol, 56', 45678901234, 4455667788),
-    ('Fernando Rocha', 'fernando.rocha@email.com', 'Av. das Estrelas, 789', 56789012345, 5566778899),
-    ('Gabriel Almeida', 'gabriel.almeida@email.com', 'Praça da Liberdade, 12', 67890123456, 6677889900);
+    ('Lucas Goncalves', 'lucas.goncalves@email.com', 'Rua das Rosas, 26', 12345678901, 1122334455),
+    ('Carlos Eduardo', 'carlos.eduardo@email.com', 'Av. das Américas, 4666', 23456789012, 2233445566),
+    ('Jose Mesquita', 'jose.mesquita@email.com', 'Rua Sá Ferreira, 789', 34567890123, 3344556677),
+    ('Manoel Gomes', 'manoel.gomes@email.com', 'Estrada dos Bandeirantes, 56', 45678901234, 4455667788),
+    ('Alan Turing', 'alan.turing@email.com', 'Av. Geremário Dantas, 789', 56789012345, 5566778899),
+    ('Julio Cesar', 'julio.cesar@email.com', 'Estrada do Rio Grande, 12', 67890123456, 6677889900);
 
 INSERT INTO public.vendedor ("CPFvendedor", nome, email, salario)
 VALUES
-    (98765432109, 'Lucia Pereira', 'lucia.pereira@email.com', 3500.0),
-    (87654321098, 'Ricardo Oliveira', 'ricardo.oliveira@email.com', 4000.0),
+    (98765432109, 'Pedro Saunders', 'pedro.saunders@email.com', 3500.0),
+    (87654321098, 'Ramon Dino', 'ramon.dino@email.com', 4000.0),
     (76543210987, 'Maria Silva', 'maria.silva@email.com', 2800.0),
     (65432109876, 'Rodrigo Santos', 'rodrigo.santos@email.com', 3200.0),
     (54321098765, 'Juliana Costa', 'juliana.costa@email.com', 3800.0),

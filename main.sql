@@ -5,7 +5,7 @@ DROP DATABASE IF EXISTS loja;
 CREATE DATABASE loja
     WITH
     OWNER = postgres
-    ENCODING = 'LATIN1'
+    ENCODING = 'UTF8'
     LC_COLLATE = 'Portuguese_Brazil.1252'
     LC_CTYPE = 'Portuguese_Brazil.1252'
     TABLESPACE = pg_default
@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS public.cliente
     nome character varying NOT NULL,
     email character varying NOT NULL,
     endereco character varying NOT NULL,
-    "CPFcliente" SERIAL PRIMARY KEY,
+    idade numeric NOT NULL CHECK (idade >= 18),
+    "CPFcliente" numeric PRIMARY KEY,
     telefone numeric NOT NULL,
     CONSTRAINT telefone UNIQUE (telefone)
 )
@@ -53,7 +54,7 @@ DROP TABLE IF EXISTS public.vendedor;
 
 CREATE TABLE IF NOT EXISTS public.vendedor
 (
-    "CPFvendedor" SERIAL PRIMARY KEY,
+    "CPFvendedor" numeric PRIMARY KEY,
     nome character varying NOT NULL,
     email character varying NOT NULL,
     salario numeric NOT NULL
@@ -72,8 +73,8 @@ CREATE TABLE IF NOT EXISTS public.venda
     "IDvenda"  SERIAL PRIMARY KEY,
     "dataVenda" date NOT NULL,
     "valorTotal" numeric NOT NULL,
-    "CPFvendedor" integer NOT NULL,
-    "CPFcliente" integer NOT NULL,
+    "CPFvendedor" numeric NOT NULL,
+    "CPFcliente" numeric NOT NULL,
     CONSTRAINT "CPFcliente" FOREIGN KEY ("CPFcliente")
         REFERENCES public.cliente ("CPFcliente") MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -96,7 +97,7 @@ DROP TABLE IF EXISTS public.fornecedor;
 
 CREATE TABLE IF NOT EXISTS public.fornecedor
 (
-    "CNPJfornecedor" SERIAL PRIMARY KEY,
+    "CNPJfornecedor" numeric PRIMARY KEY,
     "ValorTotal" numeric NOT NULL,
     "IDproduto" integer NOT NULL,
     quantidade numeric NOT NULL,
@@ -143,7 +144,7 @@ DROP TABLE IF EXISTS public.repoe;
 CREATE TABLE IF NOT EXISTS public.repoe
 (
     "dataDaReposicao" date NOT NULL,
-    "CNPJfornecedor" integer NOT NULL,
+    "CNPJfornecedor" numeric NOT NULL,
     "IDproduto" integer NOT NULL,
     CONSTRAINT "IDproduto" FOREIGN KEY ("IDproduto")
         REFERENCES public.produto ("IDproduto") MATCH SIMPLE
