@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS public.produto
     nome character varying NOT NULL,
     marca character varying NOT NULL,
     tipo character varying NOT NULL,
-    preco numeric NOT NULL,
+    preco numeric NOT NULL CHECK (preco > 0),
     quantidade integer NOT NULL
 )
 TABLESPACE pg_default;
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS public.cliente
     nome character varying NOT NULL,
     email character varying NOT NULL,
     endereco character varying NOT NULL,
-    idade numeric NOT NULL CHECK (idade >= 18),
+    idade numeric NOT NULL CHECK (idade >= 13),
     "CPFcliente" numeric PRIMARY KEY,
     telefone numeric NOT NULL,
     CONSTRAINT telefone UNIQUE (telefone)
