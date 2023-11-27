@@ -3,12 +3,7 @@ SELECT * FROM public.cliente;
 --Consulta com Junção de 3 Tabelas:
 --Objetivo: Mostrar informações sobre vendas, incluindo detalhes do cliente, vendedor e produtos vendidos.
 
-SELECT v.*, c.nome AS nome_cliente, vd.nome AS nome_vendedor, p.nome AS nome_produto
-FROM public.venda v
-JOIN public.cliente c ON v."CPFcliente" = c."CPFcliente"
-JOIN public.vendedor vd ON v."CPFvendedor" = vd."CPFvendedor"
-JOIN public.inclui i ON v."IDvenda" = i."IDvenda"
-JOIN public.produto p ON i."IDproduto" = p."IDproduto";
+SELECT v.*, c.nome AS nome_cliente, vd.nome AS nome_vendedor, p.nome AS nome_produto FROM public.venda v JOIN public.cliente c ON v."CPFcliente" = c."CPFcliente" JOIN public.vendedor vd ON v."CPFvendedor" = vd."CPFvendedor" JOIN public.inclui i ON v."IDvenda" = i."IDvenda" JOIN public.produto p ON i."IDproduto" = p."IDproduto";
 
 
 --Consulta com Agrupamento e Função de Agregação:
@@ -43,6 +38,5 @@ VALUES ('2023-11-21', 1000.25, 98765432109, 12345678901);
 --Objetivo: Remover um registro da tabela cliente.
 
 
---14) Comando para remover um cliente com o CPF especificado da tabela cliente.
-DELETE FROM public.cliente
-WHERE "CPFcliente" = 12345678901;
+DELETE FROM public.inclui
+WHERE "IDvenda" IN (SELECT "IDvenda" FROM public.venda WHERE "CPFcliente" = 12345678901);
