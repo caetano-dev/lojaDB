@@ -1,5 +1,3 @@
--- Database: loja
-
 DROP DATABASE IF EXISTS loja;
 
 CREATE DATABASE loja
@@ -12,7 +10,6 @@ CREATE DATABASE loja
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 
--- Table: public.produto
 DROP TABLE IF EXISTS public.produto;
 
 CREATE TABLE IF NOT EXISTS public.produto
@@ -30,7 +27,6 @@ ALTER TABLE IF EXISTS public.produto
     OWNER to postgres;
 
 
--- Table: public.cliente
 DROP TABLE IF EXISTS public.cliente;
 
 CREATE TABLE IF NOT EXISTS public.cliente
@@ -49,7 +45,6 @@ ALTER TABLE IF EXISTS public.cliente
     OWNER to postgres;
 
 
--- Table: public.vendedor
 DROP TABLE IF EXISTS public.vendedor;
 
 CREATE TABLE IF NOT EXISTS public.vendedor
@@ -65,7 +60,6 @@ ALTER TABLE IF EXISTS public.vendedor
     OWNER to postgres;
 
 
--- Table: public.venda
 DROP TABLE IF EXISTS public.venda;
 
 CREATE TABLE IF NOT EXISTS public.venda
@@ -92,7 +86,6 @@ ALTER TABLE IF EXISTS public.venda
     OWNER to postgres;
 
 
--- Table: public.fornecedor
 DROP TABLE IF EXISTS public.fornecedor;
 
 CREATE TABLE IF NOT EXISTS public.fornecedor
@@ -113,7 +106,6 @@ ALTER TABLE IF EXISTS public.fornecedor
     OWNER to postgres;
 
 
--- Table: public.inclui
 DROP TABLE IF EXISTS public.inclui;
 
 CREATE TABLE IF NOT EXISTS public.inclui
@@ -138,7 +130,6 @@ ALTER TABLE IF EXISTS public.inclui
     OWNER to postgres;
 
 
--- Table: public.repoe
 DROP TABLE IF EXISTS public.repoe;
 
 CREATE TABLE IF NOT EXISTS public.repoe
