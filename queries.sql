@@ -45,3 +45,9 @@ WHERE v."valorTotal" > 1000.0;
 
 SELECT p.nome AS "Product", p.quantidade AS "Quantity", p.preco AS "Price"
 FROM public.produto p;
+
+SELECT nome, preco FROM public.produto
+ORDER BY preco DESC
+LIMIT 3;
+
+SELECT AVG(salario) AS "Average Salary" FROM public.vendedor;
