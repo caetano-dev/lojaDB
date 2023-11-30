@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS loja;
+DROP DATABASE IF EXISTS qualishop;
 
-CREATE DATABASE loja
+CREATE DATABASE qualishop
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
