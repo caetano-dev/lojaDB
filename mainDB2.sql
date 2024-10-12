@@ -1,17 +1,3 @@
-DROP DATABASE IF EXISTS qualishop;
-
-CREATE DATABASE qualishop
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'Portuguese_Brazil.1252'
-    LC_CTYPE = 'Portuguese_Brazil.1252'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1
-    IS_TEMPLATE = False;
-
-DROP TABLE IF EXISTS public.produto;
-
 CREATE TABLE IF NOT EXISTS public.produto
 (
     "IDproduto" SERIAL PRIMARY KEY,
@@ -20,14 +6,7 @@ CREATE TABLE IF NOT EXISTS public.produto
     tipo character varying NOT NULL,
     preco numeric NOT NULL CHECK (preco > 0),
     quantidade integer NOT NULL
-)
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.produto
-    OWNER to postgres;
-
-
-DROP TABLE IF EXISTS public.cliente;
+);
 
 CREATE TABLE IF NOT EXISTS public.cliente
 (
@@ -38,13 +17,7 @@ CREATE TABLE IF NOT EXISTS public.cliente
     "CPFcliente" numeric PRIMARY KEY,
     telefone numeric NOT NULL,
     CONSTRAINT telefone UNIQUE (telefone)
-)
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.cliente
-    OWNER to postgres;
-
-DROP TABLE IF EXISTS public.vendedor;
+);
 
 CREATE TABLE IF NOT EXISTS public.vendedor
 (
@@ -52,13 +25,7 @@ CREATE TABLE IF NOT EXISTS public.vendedor
     nome character varying NOT NULL,
     email character varying NOT NULL,
     salario numeric NOT NULL
-)
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.vendedor
-    OWNER to postgres;
-
-DROP TABLE IF EXISTS public.venda;
+);
 
 CREATE TABLE IF NOT EXISTS public.venda
 (
@@ -77,13 +44,7 @@ CREATE TABLE IF NOT EXISTS public.venda
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.venda
-    OWNER to postgres;
-
-DROP TABLE IF EXISTS public.fornecedor;
+);
 
 CREATE TABLE IF NOT EXISTS public.fornecedor
 (
@@ -96,13 +57,7 @@ CREATE TABLE IF NOT EXISTS public.fornecedor
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.fornecedor
-    OWNER to postgres;
-
-DROP TABLE IF EXISTS public.inclui;
+);
 
 CREATE TABLE IF NOT EXISTS public.inclui
 (
@@ -119,13 +74,7 @@ CREATE TABLE IF NOT EXISTS public.inclui
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.inclui
-    OWNER to postgres;
-
-DROP TABLE IF EXISTS public.repoe;
+);
 
 CREATE TABLE IF NOT EXISTS public.repoe
 (
@@ -142,10 +91,9 @@ CREATE TABLE IF NOT EXISTS public.repoe
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID
-)
-TABLESPACE pg_default;
+);
 
-ALTER TABLE IF EXISTS public.repoe
-    OWNER to postgres;
+ALTER TABLE public.venda VALIDATE CONSTRAINT "CPFcliente";
+ALTER TABLE public.venda VALIDATE CONSTRAINT "CPFvendedor";
 
 CREATE INDEX preco_gist_id ON public.produto USING gist (preco);
