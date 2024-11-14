@@ -172,7 +172,6 @@ VALUES
 CREATE INDEX IF NOT EXISTS idx_produto_nome_gin ON public.produto USING gin (to_tsvector('portuguese', nome));
 
 -- VIEWS
--- 1. Visão que mostra detalhes completos das vendas incluindo informações do cliente e vendedor
 CREATE VIEW vw_detalhes_vendas AS
 SELECT 
     v."IDvenda",
@@ -186,7 +185,6 @@ FROM venda v
 JOIN cliente c ON v."CPFcliente" = c."CPFcliente"
 JOIN vendedor vd ON v."CPFvendedor" = vd."CPFvendedor";
 
--- 2. Visão que mostra produtos com baixo estoque (menos de 30 unidades)
 CREATE VIEW vw_produtos_baixo_estoque AS
 SELECT 
     p."IDproduto",
@@ -199,7 +197,6 @@ FROM produto p
 WHERE p.quantidade < 30
 ORDER BY p.quantidade ASC;
 
--- 3. Visão que mostra o histórico de reposição de produtos por fornecedor
 CREATE VIEW vw_historico_reposicao AS
 SELECT 
     r."dataDaReposicao",
@@ -212,7 +209,6 @@ JOIN produto p ON r."IDproduto" = p."IDproduto"
 JOIN fornecedor f ON r."CNPJfornecedor" = f."CNPJfornecedor";
 
 -- FUNCTIONS
--- 1. Função que calcula o total de vendas por período
 CREATE OR REPLACE FUNCTION fn_total_vendas_periodo(data_inicio DATE, data_fim DATE)
 RETURNS TABLE (
     total_vendas NUMERIC,
@@ -228,7 +224,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 2. Função que retorna os produtos mais vendidos
 CREATE OR REPLACE FUNCTION fn_produtos_mais_vendidos(limite INTEGER)
 RETURNS TABLE (
     produto_id INTEGER,
@@ -249,7 +244,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 3. Função que atualiza o preço de produtos por categoria
 CREATE OR REPLACE FUNCTION fn_atualizar_precos_categoria(
     tipo_produto VARCHAR,
     percentual_aumento NUMERIC
@@ -267,7 +261,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- TRIGGERS
--- 1. Trigger para verificar idade mínima do cliente
 CREATE OR REPLACE FUNCTION tf_verificar_idade_minima()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -283,7 +276,6 @@ BEFORE INSERT OR UPDATE ON cliente
 FOR EACH ROW
 EXECUTE FUNCTION tf_verificar_idade_minima();
 
--- 2. Trigger para atualizar estoque após venda
 CREATE OR REPLACE FUNCTION tf_atualizar_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -299,7 +291,6 @@ AFTER INSERT ON inclui
 FOR EACH ROW
 EXECUTE FUNCTION tf_atualizar_estoque();
 
--- 3. Trigger para registrar log de alterações de preço
 CREATE TABLE IF NOT EXISTS log_alteracao_preco (
     id SERIAL PRIMARY KEY,
     produto_id INTEGER,
@@ -324,7 +315,7 @@ BEFORE UPDATE ON produto
 FOR EACH ROW
 EXECUTE FUNCTION tf_registrar_alteracao_preco();
 
--- Exemplo de EXPLAIN para análise de plano de execução
+-- Exemplo de EXPLAIN
 EXPLAIN ANALYZE
 SELECT v."IDvenda", v."dataVenda", v."valorTotal", 
        c.nome as cliente_nome, vd.nome as vendedor_nome,
