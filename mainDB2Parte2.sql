@@ -172,102 +172,88 @@ VALUES
 CREATE INDEX IF NOT EXISTS idx_produto_nome_gin ON public.produto USING gin (to_tsvector('portuguese', nome));
 
 -- VIEWS
+-- Mostra detalhes das vendas com informações do cliente e vendedor
 CREATE VIEW vw_detalhes_vendas AS
-SELECT 
-    v."IDvenda",
-    v."dataVenda",
-    v."valorTotal",
-    c.nome as cliente_nome,
-    c.email as cliente_email,
-    vd.nome as vendedor_nome,
-    vd.email as vendedor_email
+SELECT
+	v."IDvenda",
+	v."dataVenda",
+	v."valorTotal",
+	c.nome as cliente_nome,
+	c.email as cliente_email,
+	vd.nome as vendedor_nome,
+	vd.email as vendedor_email
 FROM venda v
 JOIN cliente c ON v."CPFcliente" = c."CPFcliente"
 JOIN vendedor vd ON v."CPFvendedor" = vd."CPFvendedor";
 
+-- Mostra produtos com baixo estoque
 CREATE VIEW vw_produtos_baixo_estoque AS
-SELECT 
-    p."IDproduto",
-    p.nome,
-    p.marca,
-    p.tipo,
-    p.quantidade,
-    p.preco
-FROM produto p
-WHERE p.quantidade < 30
-ORDER BY p.quantidade ASC;
+SELECT p."IDproduto", p.nome, p.marca,	p.tipo, p.quantidade, p.preco
+FROM produto p WHERE p.quantidade < 30 ORDER BY p.quantidade ASC;
 
+-- Mostra histórico de reposição de produtos por fornecedor
 CREATE VIEW vw_historico_reposicao AS
-SELECT 
-    r."dataDaReposicao",
-    p.nome as produto_nome,
-    f."CNPJfornecedor",
-    f.quantidade as qtd_fornecida,
-    f."ValorTotal"
-FROM repoe r
-JOIN produto p ON r."IDproduto" = p."IDproduto"
-JOIN fornecedor f ON r."CNPJfornecedor" = f."CNPJfornecedor";
+SELECT
+	r."dataDaReposicao",
+	p.nome as produto_nome,
+	f."CNPJfornecedor",
+	f.quantidade as qtd_fornecida,
+	f."ValorTotal"
+FROM repoe r JOIN produto p ON r."IDproduto" = p."IDproduto" JOIN fornecedor f ON r."CNPJfornecedor" = f."CNPJfornecedor";
 
 -- FUNCTIONS
+-- Calcula o total de vendas por período
 CREATE OR REPLACE FUNCTION fn_total_vendas_periodo(data_inicio DATE, data_fim DATE)
-RETURNS TABLE (
-    total_vendas NUMERIC,
-    quantidade_vendas BIGINT
-) AS $$
+RETURNS TABLE (total_vendas NUMERIC, quantidade_vendas BIGINT) AS $$
 BEGIN
-    RETURN QUERY
-    SELECT 
-        SUM("valorTotal") as total_vendas,
-        COUNT(*) as quantidade_vendas
-    FROM venda
-    WHERE "dataVenda" BETWEEN data_inicio AND data_fim;
+	RETURN QUERY
+	SELECT
+    	SUM("valorTotal") as total_vendas,
+    	COUNT(*) as quantidade_vendas
+	FROM venda
+	WHERE "dataVenda" BETWEEN data_inicio AND data_fim;
 END;
 $$ LANGUAGE plpgsql;
 
+-- Retorna os produtos mais vendidos
 CREATE OR REPLACE FUNCTION fn_produtos_mais_vendidos(limite INTEGER)
-RETURNS TABLE (
-    produto_id INTEGER,
-    produto_nome VARCHAR,
-    quantidade_vendida BIGINT
-) AS $$
+RETURNS TABLE (produto_id INTEGER, produto_nome VARCHAR, quantidade_vendida BIGINT ) AS $$
 BEGIN
-    RETURN QUERY
-    SELECT 
-        p."IDproduto",
-        p.nome,
-        COUNT(i."IDvenda") as quantidade_vendida
-    FROM produto p
-    JOIN inclui i ON p."IDproduto" = i."IDproduto"
-    GROUP BY p."IDproduto", p.nome
-    ORDER BY quantidade_vendida DESC
-    LIMIT limite;
+	RETURN QUERY
+	SELECT
+    	p."IDproduto", p.nome, COUNT(i."IDvenda") as quantidade_vendida
+	FROM produto p
+	JOIN inclui i ON p."IDproduto" = i."IDproduto"
+	GROUP BY p."IDproduto", p.nome
+	ORDER BY quantidade_vendida DESC	LIMIT limite;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fn_atualizar_precos_categoria(
-    tipo_produto VARCHAR,
-    percentual_aumento NUMERIC
-) RETURNS INTEGER AS $$
+-- Atualiza o preço de produtos por categoria
+CREATE OR REPLACE FUNCTION fn_atualizar_precos_categoria(tipo_produto VARCHAR, percentual_aumento NUMERIC) RETURNS INTEGER AS $$
 DECLARE
-    produtos_atualizados INTEGER;
+	produtos_atualizados INTEGER;
 BEGIN
-    UPDATE produto
-    SET preco = preco * (1 + percentual_aumento/100)
-    WHERE tipo = tipo_produto;
+	UPDATE produto
+	SET preco = preco * (1 + percentual_aumento/100)
+	WHERE tipo = tipo_produto;
     
-    GET DIAGNOSTICS produtos_atualizados = ROW_COUNT;
-    RETURN produtos_atualizados;
+	GET DIAGNOSTICS produtos_atualizados = ROW_COUNT;
+	RETURN produtos_atualizados;
 END;
 $$ LANGUAGE plpgsql;
+
+
 
 -- TRIGGERS
+-- Verificar idade mínima do cliente (cria um erro caso seja menor de 13 anos)
 CREATE OR REPLACE FUNCTION tf_verificar_idade_minima()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.idade < 13 THEN
-        RAISE EXCEPTION 'Cliente deve ter no mínimo 13 anos de idade';
-    END IF;
-    RETURN NEW;
+	IF NEW.idade < 13 THEN
+    	RAISE EXCEPTION 'Cliente deve ter no mínimo 13 anos de idade';
+	END IF;
+	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -276,13 +262,14 @@ BEFORE INSERT OR UPDATE ON cliente
 FOR EACH ROW
 EXECUTE FUNCTION tf_verificar_idade_minima();
 
+-- Atualizar estoque após uma venda
 CREATE OR REPLACE FUNCTION tf_atualizar_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE produto
-    SET quantidade = quantidade - 1
-    WHERE "IDproduto" = NEW."IDproduto";
-    RETURN NEW;
+	UPDATE produto
+	SET quantidade = quantidade - 1
+	WHERE "IDproduto" = NEW."IDproduto";
+	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -291,22 +278,23 @@ AFTER INSERT ON inclui
 FOR EACH ROW
 EXECUTE FUNCTION tf_atualizar_estoque();
 
+-- Criar log de alterações de preço
 CREATE TABLE IF NOT EXISTS log_alteracao_preco (
-    id SERIAL PRIMARY KEY,
-    produto_id INTEGER,
-    preco_antigo NUMERIC,
-    preco_novo NUMERIC,
-    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	id SERIAL PRIMARY KEY,
+	produto_id INTEGER,
+	preco_antigo NUMERIC,
+	preco_novo NUMERIC,
+	data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION tf_registrar_alteracao_preco()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.preco <> OLD.preco THEN
-        INSERT INTO log_alteracao_preco (produto_id, preco_antigo, preco_novo)
-        VALUES (NEW."IDproduto", OLD.preco, NEW.preco);
-    END IF;
-    RETURN NEW;
+	IF NEW.preco <> OLD.preco THEN
+    	INSERT INTO log_alteracao_preco (produto_id, preco_antigo, preco_novo)
+    	VALUES (NEW."IDproduto", OLD.preco, NEW.preco);
+	END IF;
+	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -315,11 +303,11 @@ BEFORE UPDATE ON produto
 FOR EACH ROW
 EXECUTE FUNCTION tf_registrar_alteracao_preco();
 
--- Exemplo de EXPLAIN
+-- EXPLAIN
 EXPLAIN ANALYZE
-SELECT v."IDvenda", v."dataVenda", v."valorTotal", 
-       c.nome as cliente_nome, vd.nome as vendedor_nome,
-       p.nome as produto_nome
+SELECT v."IDvenda", v."dataVenda", v."valorTotal",
+   	c.nome as cliente_nome, vd.nome as vendedor_nome,
+   	p.nome as produto_nome
 FROM venda v
 JOIN cliente c ON v."CPFcliente" = c."CPFcliente"
 JOIN vendedor vd ON v."CPFvendedor" = vd."CPFvendedor"
