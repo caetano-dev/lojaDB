@@ -1,16 +1,16 @@
-SELECT * FROM vw_detalhes_vendas LIMIT 3;
+SELECT * FROM view_detalhes_vendas LIMIT 3;
 
-SELECT * FROM vw_produtos_baixo_estoque;
+SELECT * FROM view_produtos_baixo_estoque;
 
-SELECT * FROM vw_historico_reposicao LIMIT 3;
+SELECT * FROM view_historico_reposicao LIMIT 3;
 
-SELECT * FROM fn_total_vendas_periodo('2023-11-01', '2023-11-30');
+SELECT * FROM funcao_total_vendas_periodo('2023-11-01', '2023-11-30');
 
-SELECT * FROM fn_produtos_mais_vendidos(5);
+SELECT * FROM funcao_produtos_mais_vendidos(5);
 
 SELECT nome, tipo, preco FROM produto WHERE tipo = 'Eletrônicos';
 
-SELECT fn_atualizar_precos_categoria('Eletrônicos', 10);
+SELECT funcao_atualizar_precos_categoria('Eletrônicos', 10);
 -- Verificar as mudanças
 SELECT nome, tipo, preco FROM produto WHERE tipo = 'Eletrônicos';
 
@@ -44,4 +44,3 @@ SELECT * FROM log_alteracao_preco
 WHERE produto_id = 1
 ORDER BY data_alteracao DESC
 LIMIT 1;
-
