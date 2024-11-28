@@ -172,8 +172,8 @@ VALUES
 CREATE INDEX IF NOT EXISTS idx_produto_nome_gin ON public.produto USING gin (to_tsvector('portuguese', nome));
 
 -- VIEWS
--- Mostra detalhes das vendas com informações do cliente e vendedor
-CREATE VIEW vw_detalhes_vendas AS
+-- VIEWS
+CREATE VIEW view_detalhes_vendas AS
 SELECT
 	v."IDvenda",
 	v."dataVenda",
@@ -186,13 +186,13 @@ FROM venda v
 JOIN cliente c ON v."CPFcliente" = c."CPFcliente"
 JOIN vendedor vd ON v."CPFvendedor" = vd."CPFvendedor";
 
--- Mostra produtos com baixo estoque
-CREATE VIEW vw_produtos_baixo_estoque AS
+-- —----------------
+CREATE VIEW view_produtos_baixo_estoque AS
 SELECT p."IDproduto", p.nome, p.marca,	p.tipo, p.quantidade, p.preco
 FROM produto p WHERE p.quantidade < 30 ORDER BY p.quantidade ASC;
 
--- Mostra histórico de reposição de produtos por fornecedor
-CREATE VIEW vw_historico_reposicao AS
+-- —---------------
+CREATE VIEW view_historico_reposicao AS
 SELECT
 	r."dataDaReposicao",
 	p.nome as produto_nome,
@@ -202,8 +202,7 @@ SELECT
 FROM repoe r JOIN produto p ON r."IDproduto" = p."IDproduto" JOIN fornecedor f ON r."CNPJfornecedor" = f."CNPJfornecedor";
 
 -- FUNCTIONS
--- Calcula o total de vendas por período
-CREATE OR REPLACE FUNCTION fn_total_vendas_periodo(data_inicio DATE, data_fim DATE)
+CREATE OR REPLACE FUNCTION funcao_total_vendas_periodo(data_inicio DATE, data_fim DATE)
 RETURNS TABLE (total_vendas NUMERIC, quantidade_vendas BIGINT) AS $$
 BEGIN
 	RETURN QUERY
@@ -215,8 +214,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Retorna os produtos mais vendidos
-CREATE OR REPLACE FUNCTION fn_produtos_mais_vendidos(limite INTEGER)
+-- —-----------------------
+CREATE OR REPLACE FUNCTION funcao_produtos_mais_vendidos(limite INTEGER)
 RETURNS TABLE (produto_id INTEGER, produto_nome VARCHAR, quantidade_vendida BIGINT ) AS $$
 BEGIN
 	RETURN QUERY
@@ -229,8 +228,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Atualiza o preço de produtos por categoria
-CREATE OR REPLACE FUNCTION fn_atualizar_precos_categoria(tipo_produto VARCHAR, percentual_aumento NUMERIC) RETURNS INTEGER AS $$
+-- ----------------------
+CREATE OR REPLACE FUNCTION funcao_atualizar_precos_categoria(tipo_produto VARCHAR, percentual_aumento NUMERIC) RETURNS INTEGER AS $$
 DECLARE
 	produtos_atualizados INTEGER;
 BEGIN
@@ -246,7 +245,7 @@ $$ LANGUAGE plpgsql;
 
 
 -- TRIGGERS
--- Verificar idade mínima do cliente (cria um erro caso seja menor de 13 anos)
+
 CREATE OR REPLACE FUNCTION tf_verificar_idade_minima()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -257,12 +256,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_verificar_idade_minima
+CREATE TRIGGER trigger_verificar_idade_minima
 BEFORE INSERT OR UPDATE ON cliente
 FOR EACH ROW
 EXECUTE FUNCTION tf_verificar_idade_minima();
 
--- Atualizar estoque após uma venda
+-- ----------------------
 CREATE OR REPLACE FUNCTION tf_atualizar_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -273,12 +272,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_atualizar_estoque
+CREATE TRIGGER trigger_atualizar_estoque
 AFTER INSERT ON inclui
 FOR EACH ROW
 EXECUTE FUNCTION tf_atualizar_estoque();
 
--- Criar log de alterações de preço
+-- ----------------------
 CREATE TABLE IF NOT EXISTS log_alteracao_preco (
 	id SERIAL PRIMARY KEY,
 	produto_id INTEGER,
@@ -298,20 +297,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_registrar_alteracao_preco
+CREATE TRIGGER trigger_registrar_alteracao_preco
 BEFORE UPDATE ON produto
 FOR EACH ROW
 EXECUTE FUNCTION tf_registrar_alteracao_preco();
 
 -- EXPLAIN
 EXPLAIN ANALYZE
-SELECT v."IDvenda", v."dataVenda", v."valorTotal",
-   	c.nome as cliente_nome, vd.nome as vendedor_nome,
-   	p.nome as produto_nome
-FROM venda v
-JOIN cliente c ON v."CPFcliente" = c."CPFcliente"
-JOIN vendedor vd ON v."CPFvendedor" = vd."CPFvendedor"
-JOIN inclui i ON v."IDvenda" = i."IDvenda"
-JOIN produto p ON i."IDproduto" = p."IDproduto"
-WHERE v."dataVenda" >= '2023-01-01'
-ORDER BY v."dataVenda" DESC;
+SELECT "IDvenda", "dataVenda", "valorTotal" FROM venda WHERE "dataVenda" >= '2023-01-01' ORDER BY "dataVenda" DESC;
